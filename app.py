@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image, ImageEnhance, ImageFilter, ImageDraw
+from PIL import Image, ImageEnhance, ImageFilter
 
 # إعداد الصفحة
 st.set_page_config(page_title="حساب تأثير التدخين على صورتك", layout="centered")
@@ -61,26 +61,27 @@ if uploaded_file is not None:
             r, g, b = glow_image.split()
 
             # تعديل قناة اللون الأحمر لزيادة الاحمرار بشكل بسيط
-            r = r.point(lambda i: min(i + 30, 255))  # زيادة الاحمرار
+            r = r.point(lambda i: min(i + 15, 255))  # زيادة الاحمرار
 
             # تعديل قناة اللون الأخضر لزيادة اللون الأصفر قليلًا
-            g = g.point(lambda i: min(i + 10, 255))  # زيادة الأصفر
+            g = g.point(lambda i: min(i + 5, 255))  # زيادة الأصفر
 
             # دمج القنوات المعدلة
             warm_image = Image.merge("RGB", (r, g, b))
 
-            # 6. إضافة خطوط للتجاعيد (يتم إضافة خطوط داكنة على الوجه لمحاكاة التجاعيد)
-            draw = ImageDraw.Draw(warm_image)
-            width, height = warm_image.size
+            # 6. إضافة تأثيرات إضافية بناءً على العمر
+            if age == 20:
+                # تأثير خفيف للتدخين بعد 20 سنة
+                enhancer = ImageEnhance.Contrast(warm_image)
+                final_image = enhancer.enhance(1.1)  # زيادة التباين بنسبة 10% لإعطاء تأثير خفيف
+            elif age == 30:
+                # تأثير متوسط للتدخين بعد 30 سنة
+                enhancer = ImageEnhance.Contrast(warm_image)
+                final_image = enhancer.enhance(1.3)  # زيادة التباين بنسبة 30% لإعطاء تأثير متوسط
+            elif age == 40:
+                # تأثير قوي للتدخين بعد 40 سنة
+                enhancer = ImageEnhance.Contrast(warm_image)
+                final_image = enhancer.enhance(1.5)  # زيادة التباين بنسبة 50% لإعطاء تأثير قوي
 
-            # إضافة خطوط تجاعيد حول العين والفم
-            # خطوط العين
-            draw.line((width * 0.35, height * 0.35, width * 0.45, height * 0.45), fill=(80, 80, 80), width=2)
-            draw.line((width * 0.40, height * 0.38, width * 0.50, height * 0.48), fill=(80, 80, 80), width=2)
-
-            # خطوط حول الفم
-            draw.line((width * 0.35, height * 0.60, width * 0.45, height * 0.65), fill=(80, 80, 80), width=2)
-            draw.line((width * 0.45, height * 0.63, width * 0.55, height * 0.68), fill=(80, 80, 80), width=2)
-
-            # 7. إظهار الصورة النهائية مع التجاعيد
-            st.image(warm_image, caption=f"📆 صورتك بعد {age} سنة من التدخين", use_column_width=True)
+            # 7. إظهار الصورة النهائية مع تأثيرات التدخين
+            st.image(final_image, caption=f"📆 صورتك بعد {age} سنة من التدخين", use_column_width=True)
