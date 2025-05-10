@@ -1,1 +1,1 @@
-pip install streamlit pillow
+pip install tensorflow opencv-python face-recognition
